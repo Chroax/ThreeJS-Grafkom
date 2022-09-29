@@ -1,0 +1,42 @@
+Pengenalan three js -> Materi (AMIN)
+Three JS Structure -> Materi (AMIN)
+
+Prequisite, Setup, and Installation -> Materi (DAVIAN)
+Creating A Scene (DAVIAN)
+Create A Line (DAVIAN)
+Create A Text (DAVIAN)
+
+What is A Geometry -> Materi (TEGAR)
+Create A 2D Shape
+  - Circle (TEGAR)
+  - Rectangle (TEGAR)
+  - Triangle (TEGAR)
+
+Primitives in Three JS -> Materi (YATESTHA)
+
+Create 3D Shape
+  - BoxGeometry (YATESTHA)
+  - CapsuleGeometry (YATESTHA)
+  - CircleGeometry (YATESTHA)
+  - ConeGeometry (YATESTHA)
+  - CylinderGeometry (YATESTHA)
+  - DodecahedronGeometry (YATESTHA)
+  - EdgesGeometry (YATESTHA)
+  - ExtrudeGeometry (TEGAR)
+  - IcosahedronGeometry (TEGAR)
+  - LatheGeometry (AMIN)
+  - OctahedronGeometry (AMIN)
+  - PlaneGeometry (AMIN)
+  - PolyhedronGeometry (AMIN)
+  - RingGeometry (CAHYADI)
+  - ShapeGeometry (CAHYADI)
+  - SphereGeometry (CAHYADI)
+  - TetrahedronGeometry (CAHYADI)
+  - TorusGeometry (DAVIAN)
+  - TorusKnotGeometry (DAVIAN)
+  - TubeGeometry (DAVIAN)
+  - WireframeGeometry (DAVIAN)
+
+Create A Creational 3D Object -> Materi (Konsep) (CAHYADI, AMIN)
+
+Powerpoint Artist (TEGAR)
