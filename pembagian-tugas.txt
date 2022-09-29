@@ -40,3 +40,4 @@ Create 3D Shape
 Create A Creational 3D Object -> Materi (Konsep) (CAHYADI, AMIN)
 
 Powerpoint Artist (TEGAR)
+Link PPT : https://docs.google.com/presentation/d/1S8AJZjGMaVOP_AkSE3bkuNcXYsHbBdJgQ8n-R83pkPQ/edit?usp=sharing
