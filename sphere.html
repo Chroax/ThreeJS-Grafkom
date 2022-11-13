@@ -2,7 +2,7 @@
 
 <html>
   <head>
-    <title>Example 06.02 - Advanced 3D geometries - Lathe</title>
+    <title>Example 05.05 - Basic 3D geometries - Sphere</title>
     <script type="text/javascript" src="../libs/three.js"></script>
 
     <script type="text/javascript" src="../libs/stats.js"></script>
@@ -43,10 +43,14 @@
         webGLRenderer.setSize(window.innerWidth, window.innerHeight);
         webGLRenderer.shadowMapEnabled = true;
 
+        var sphere = createMesh(new THREE.SphereGeometry(4, 10, 10));
+        // add the sphere to the scene
+        scene.add(sphere);
+
         // position and point the camera to the center of the scene
-        camera.position.x = -30;
-        camera.position.y = 40;
-        camera.position.z = 50;
+        camera.position.x = -20;
+        camera.position.y = 30;
+        camera.position.z = 40;
         camera.lookAt(new THREE.Vector3(10, 0, 0));
 
         // add the output of the renderer to the html element
@@ -57,85 +61,58 @@
         // call the render function
         var step = 0;
 
-        // the points group
-        var spGroup;
-        // the mesh
-        var latheMesh;
-
-        generatePoints(12, 2, 2 * Math.PI);
-
         // setup the control gui
         var controls = new (function () {
           // we need the first child, since it's a multimaterial
-
-          this.segments = 12;
+          this.radius = sphere.children[0].geometry.parameters.radius;
+          this.widthSegments =
+            sphere.children[0].geometry.parameters.widthSegments;
+          this.heightSegments =
+            sphere.children[0].geometry.parameters.heightSegments;
           this.phiStart = 0;
-          this.phiLength = 2 * Math.PI;
+          this.phiLength = Math.PI * 2;
+          this.thetaStart = 0;
+          this.thetaLength = Math.PI;
 
           this.redraw = function () {
-            scene.remove(spGroup);
-            scene.remove(latheMesh);
-            generatePoints(
-              controls.segments,
-              controls.phiStart,
-              controls.phiLength
+            // remove the old plane
+            scene.remove(sphere);
+            // create a new one
+            sphere = createMesh(
+              new THREE.SphereGeometry(
+                controls.radius,
+                controls.widthSegments,
+                controls.heightSegments,
+                controls.phiStart,
+                controls.phiLength,
+                controls.thetaStart,
+                controls.thetaLength
+              )
             );
+            // add it to the scene.
+            scene.add(sphere);
           };
         })();
 
         var gui = new dat.GUI();
-        gui.add(controls, "segments", 0, 50).step(1).onChange(controls.redraw);
+        gui.add(controls, "radius", 0, 40).onChange(controls.redraw);
+        gui.add(controls, "widthSegments", 0, 20).onChange(controls.redraw);
+        gui.add(controls, "heightSegments", 0, 20).onChange(controls.redraw);
         gui.add(controls, "phiStart", 0, 2 * Math.PI).onChange(controls.redraw);
         gui
           .add(controls, "phiLength", 0, 2 * Math.PI)
           .onChange(controls.redraw);
+        gui
+          .add(controls, "thetaStart", 0, 2 * Math.PI)
+          .onChange(controls.redraw);
+        gui
+          .add(controls, "thetaLength", 0, 2 * Math.PI)
+          .onChange(controls.redraw);
 
         render();
 
-        function generatePoints(segments, phiStart, phiLength) {
-          // add 10 random spheres
-          var points = [];
-          var height = 5;
-          var count = 30;
-          for (var i = 0; i < count; i++) {
-            points.push(
-              new THREE.Vector3(
-                (Math.sin(i * 0.2) + Math.cos(i * 0.3)) * height + 12,
-                0,
-                i - count + count / 2
-              )
-            );
-          }
-
-          spGroup = new THREE.Object3D();
-          var material = new THREE.MeshBasicMaterial({
-            color: 0xff0000,
-            transparent: false,
-          });
-          points.forEach(function (point) {
-            var spGeom = new THREE.SphereGeometry(0.2);
-            var spMesh = new THREE.Mesh(spGeom, material);
-            spMesh.position.copy(point);
-            spGroup.add(spMesh);
-          });
-          // add the points as a group to the scene
-          scene.add(spGroup);
-
-          // use the same points to create a LatheGeometry
-          var latheGeometry = new THREE.LatheGeometry(
-            points,
-            segments,
-            phiStart,
-            phiLength
-          );
-          latheMesh = createMesh(latheGeometry);
-
-          scene.add(latheMesh);
-        }
-
         function createMesh(geom) {
           // assign two materials
-          //  var meshMaterial = new THREE.MeshBasicMaterial({color:0x00ff00, transparent:true, opacity:0.6});
           var meshMaterial = new THREE.MeshNormalMaterial();
           meshMaterial.side = THREE.DoubleSide;
           var wireFrameMat = new THREE.MeshBasicMaterial();
@@ -153,8 +130,7 @@
         function render() {
           stats.update();
 
-          spGroup.rotation.x = step;
-          latheMesh.rotation.x = step += 0.01;
+          sphere.rotation.y = step += 0.01;
 
           // render using requestAnimationFrame
           requestAnimationFrame(render);

@@ -2,7 +2,7 @@
 
 <html>
   <head>
-    <title>Example 06.02 - Advanced 3D geometries - Lathe</title>
+    <title>Example 06.04 - Extrude TubeGeometry</title>
     <script type="text/javascript" src="../libs/three.js"></script>
 
     <script type="text/javascript" src="../libs/stats.js"></script>
@@ -60,52 +60,70 @@
         // the points group
         var spGroup;
         // the mesh
-        var latheMesh;
-
-        generatePoints(12, 2, 2 * Math.PI);
+        var tubeMesh;
 
         // setup the control gui
         var controls = new (function () {
+          this.numberOfPoints = 5;
+          this.segments = 64;
+          this.radius = 1;
+          this.radiusSegments = 8;
+          this.closed = false;
+          this.points = [];
           // we need the first child, since it's a multimaterial
 
-          this.segments = 12;
-          this.phiStart = 0;
-          this.phiLength = 2 * Math.PI;
+          this.newPoints = function () {
+            var points = [];
+            for (var i = 0; i < controls.numberOfPoints; i++) {
+              var randomX = -20 + Math.round(Math.random() * 50);
+              var randomY = -15 + Math.round(Math.random() * 40);
+              var randomZ = -20 + Math.round(Math.random() * 40);
+
+              points.push(new THREE.Vector3(randomX, randomY, randomZ));
+            }
+            controls.points = points;
+            controls.redraw();
+          };
 
           this.redraw = function () {
             scene.remove(spGroup);
-            scene.remove(latheMesh);
+            scene.remove(tubeMesh);
             generatePoints(
+              controls.points,
               controls.segments,
-              controls.phiStart,
-              controls.phiLength
+              controls.radius,
+              controls.radiusSegments,
+              controls.closed
             );
           };
         })();
 
         var gui = new dat.GUI();
-        gui.add(controls, "segments", 0, 50).step(1).onChange(controls.redraw);
-        gui.add(controls, "phiStart", 0, 2 * Math.PI).onChange(controls.redraw);
+        gui.add(controls, "newPoints");
         gui
-          .add(controls, "phiLength", 0, 2 * Math.PI)
+          .add(controls, "numberOfPoints", 2, 15)
+          .step(1)
+          .onChange(controls.newPoints);
+        gui.add(controls, "segments", 0, 200).step(1).onChange(controls.redraw);
+        gui.add(controls, "radius", 0, 10).onChange(controls.redraw);
+        gui
+          .add(controls, "radiusSegments", 0, 100)
+          .step(1)
           .onChange(controls.redraw);
+        gui.add(controls, "closed").onChange(controls.redraw);
+
+        controls.newPoints();
 
         render();
 
-        function generatePoints(segments, phiStart, phiLength) {
-          // add 10 random spheres
-          var points = [];
-          var height = 5;
-          var count = 30;
-          for (var i = 0; i < count; i++) {
-            points.push(
-              new THREE.Vector3(
-                (Math.sin(i * 0.2) + Math.cos(i * 0.3)) * height + 12,
-                0,
-                i - count + count / 2
-              )
-            );
-          }
+        function generatePoints(
+          points,
+          segments,
+          radius,
+          radiusSegments,
+          closed
+        ) {
+          // add n random spheres
 
           spGroup = new THREE.Object3D();
           var material = new THREE.MeshBasicMaterial({
@@ -121,23 +139,27 @@
           // add the points as a group to the scene
           scene.add(spGroup);
 
-          // use the same points to create a LatheGeometry
-          var latheGeometry = new THREE.LatheGeometry(
-            points,
+          // use the same points to create a convexgeometry
+          var tubeGeometry = new THREE.TubeGeometry(
+            new THREE.SplineCurve3(points),
             segments,
-            phiStart,
-            phiLength
+            radius,
+            radiusSegments,
+            closed
           );
-          latheMesh = createMesh(latheGeometry);
-
-          scene.add(latheMesh);
+          tubeMesh = createMesh(tubeGeometry);
+          scene.add(tubeMesh);
         }
 
         function createMesh(geom) {
           // assign two materials
-          //  var meshMaterial = new THREE.MeshBasicMaterial({color:0x00ff00, transparent:true, opacity:0.6});
-          var meshMaterial = new THREE.MeshNormalMaterial();
-          meshMaterial.side = THREE.DoubleSide;
+          //var meshMaterial = new THREE.MeshNormalMaterial();
+          var meshMaterial = new THREE.MeshBasicMaterial({
+            color: 0x00ff00,
+            transparent: true,
+            opacity: 0.2,
+          });
+
           var wireFrameMat = new THREE.MeshBasicMaterial();
           wireFrameMat.wireframe = true;
 
@@ -153,8 +175,8 @@
         function render() {
           stats.update();
 
-          spGroup.rotation.x = step;
-          latheMesh.rotation.x = step += 0.01;
+          spGroup.rotation.y = step;
+          tubeMesh.rotation.y = step += 0.01;
 
           // render using requestAnimationFrame
           requestAnimationFrame(render);
