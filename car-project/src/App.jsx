@@ -10,35 +10,38 @@ function App() {
     threejs.initialize();
     threejs.animate();
 
-    const backWheel = createWheels(12, 12, 33);
+    const backWheel = createMesh(new THREE.BoxGeometry(12, 12, 33), 
+        new THREE.MeshLambertMaterial({ color: 0x333333 }));
     backWheel.position.y = 6;
     backWheel.position.x = -18;
     threejs.scene.add(backWheel);
     
-    const frontWheel = createWheels(12, 12, 33);
+    const frontWheel = createMesh(new THREE.BoxGeometry(12, 12, 33), 
+        new THREE.MeshLambertMaterial({ color: 0x333333 }));
     frontWheel.position.y = 6;  
     frontWheel.position.x = 18;
     threejs.scene.add(frontWheel);
     
-    const body = new THREE.BoxGeometry(60, 15, 30);
-    const bodyMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
-    const carBody = new THREE.Mesh(body, bodyMaterial);
+    const carBody = createMesh(new THREE.BoxGeometry(60, 15, 30), 
+        new THREE.MeshLambertMaterial({ color: 0xff0000 }));
+
     carBody.position.y = 12;
     threejs.scene.add(carBody);
 
-    const cabin = new THREE.BoxGeometry(33, 12, 24);
-    const cabinMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
-    const cabinBody = new THREE.Mesh(cabin, cabinMaterial);
+    const cabinBody = createMesh(new THREE.BoxGeometry(33, 12, 24), 
+        new THREE.MeshLambertMaterial({ color: 0xffffff }));
     cabinBody.position.x = -6;
     cabinBody.position.y = 25.5;
     threejs.scene.add(cabinBody);
     
-    const frontGlass = createWheels(12, 12, 24.1);
+    const frontGlass = createMesh(new THREE.BoxGeometry(12, 12, 24.1), 
+        new THREE.MeshLambertMaterial({ color: 0x333333 }));
     frontGlass.position.y = 24;  
     frontGlass.position.x = 3;
     threejs.scene.add(frontGlass);
 
-    const backGlass = createWheels(16, 12, 24.1);
+    const backGlass = createMesh(new THREE.BoxGeometry(16, 12, 24.1), 
+        new THREE.MeshLambertMaterial({ color: 0x333333 }));
     backGlass.position.y = 24;  
     backGlass.position.x = -13;
     threejs.scene.add(backGlass);
@@ -77,9 +80,9 @@ function App() {
 
     const wheelFolder = carPartFolder.addFolder('Wheel');
     const propertiesWheelFolder = wheelFolder.addFolder('Properties');
-    
+
     const materialWheelFolder = wheelFolder.addFolder('Wheel Material');
-    var wireframeMaterial = new THREE.MeshBasicMaterial({color: 0xFF0000, wireframe: false })
+    var wireframeMaterial = new THREE.MeshLambertMaterial({color: 0xFF0000, wireframe: false })
     const materialWheelParams = {
       wheelColor: backWheel.material.color.getHex(),
       wheelWireframe : wireframeMaterial.wireframe
@@ -128,22 +131,72 @@ function App() {
 
     const bodyFolder = carPartFolder.addFolder('Body');
     const propertiesBodyFolder = bodyFolder.addFolder('Properties');
+
     const materialBodyFolder = bodyFolder.addFolder('Body Material');
-    const positionBodyFolder = bodyFolder.addFolder('Position');
-    const rotationBodyFolder = bodyFolder.addFolder('Rotation');
-    
+    const materialBodyParams = {
+      carBodyColor: carBody.material.color.getHex(),
+      carBodyWireframe : wireframeMaterial.wireframe
+    };
+    materialBodyFolder
+      .addColor(materialBodyParams, 'carBodyColor')
+      .name("Body Color")
+      .listen()
+      .onChange((value) => {
+        carBody.material.color.set(value);
+      });
+    materialBodyFolder
+    .add(materialBodyParams, 'carBodyWireframe')
+    .name("Wireframe")
+    .listen()
+    .onChange((value) => {
+      carBody.material.wireframe = value;
+    });
+
+    const positionCarBodyFolder = bodyFolder.addFolder('Position');
+    positionCarBodyFolder.add(carBody.position, 'x', -100, 100).name('Change X Axis');
+    positionCarBodyFolder.add(carBody.position, 'y', -100, 100).name('Change Y Axis');
+    positionCarBodyFolder.add(carBody.position, 'z', -100, 100).name('Change Z Axis');
+    const rotationCarBodyFolder = bodyFolder.addFolder('Rotation');
+    rotationCarBodyFolder.add(carBody.rotation, 'x', 0, Math.PI).name('Rotate X Axis');
+    rotationCarBodyFolder.add(carBody.rotation, 'y', 0, Math.PI).name('Rotate Y Axis');
+    rotationCarBodyFolder.add(carBody.rotation, 'z', 0, Math.PI).name('Rotate Z Axis');
+
     const cabinFolder = carPartFolder.addFolder('Cabin');
     const propertiesCabinFolder = cabinFolder.addFolder('Properties');
+    
     const materialCabinFolder = cabinFolder.addFolder('Cabin Material');
-    const positionCabinFolder = cabinFolder.addFolder('Position');
-    const rotationCabinFolder = cabinFolder.addFolder('Rotation');
+    const materialCabinParams = {
+      cabinColor: cabinBody.material.color.getHex(),
+      cabinWireframe : wireframeMaterial.wireframe
+    };
+    materialCabinFolder
+      .addColor(materialCabinParams, 'cabinColor')
+      .name("Cabin Color")
+      .listen()
+      .onChange((value) => {
+        cabinBody.material.color.set(value);
+      });
+    materialCabinFolder
+    .add(materialCabinParams, 'cabinWireframe')
+    .name("Wireframe")
+    .listen()
+    .onChange((value) => {
+      cabinBody.material.wireframe = value;
+    });
 
+    const positionCabinFolder = cabinFolder.addFolder('Position');
+    positionCabinFolder.add(cabinBody.position, 'x', -100, 100).name('Change X Axis');
+    positionCabinFolder.add(cabinBody.position, 'y', -100, 100).name('Change Y Axis');
+    positionCabinFolder.add(cabinBody.position, 'z', -100, 100).name('Change Z Axis');
+    const rotationCabinFolder = cabinFolder.addFolder('Rotation');
+    rotationCabinFolder.add(cabinBody.rotation, 'x', 0, Math.PI).name('Rotate X Axis');
+    rotationCabinFolder.add(cabinBody.rotation, 'y', 0, Math.PI).name('Rotate Y Axis');
+    rotationCabinFolder.add(cabinBody.rotation, 'z', 0, Math.PI).name('Rotate Z Axis');
 
     const glassFolder = carPartFolder.addFolder('Glass');
     const propertiesGlassFolder = glassFolder.addFolder('Properties');
     
     const materialGlassFolder = glassFolder.addFolder('Glass Material');
-    var wireframeMaterial = new THREE.MeshBasicMaterial({color: 0xFF0000, wireframe: false })
     const materialGlassParams = {
       glassColor: backGlass.material.color.getHex(),
       glassWireframe : wireframeMaterial.wireframe
@@ -201,11 +254,9 @@ function App() {
   );
 }
 
-function createWheels(width, height, depth) {
-  const geometry = new THREE.BoxBufferGeometry(width, height, depth);
-  const material = new THREE.MeshLambertMaterial({ color: 0x333333 });
-  const wheel = new THREE.Mesh(geometry, material);
-  return wheel;
-}
+function createMesh(geometry, meshMaterial) {
 
+  var mesh = new THREE.Mesh(geometry, meshMaterial);
+  return mesh;
+}
 export default App

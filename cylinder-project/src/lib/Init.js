@@ -55,10 +55,11 @@ export default class Init {
     this.ambientLight.castShadow = true;
     this.scene.add(this.ambientLight);
 
-    //Ambient light which is for the whole scene
-    this.ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    this.ambientLight.castShadow = true;
-    this.scene.add(this.ambientLight);
+    //Spot light which is illuminating the chart directly
+    this.spotLight = new THREE.SpotLight(0xffffff, 1);
+    this.spotLight.castShadow = true;
+    this.spotLight.position.set(0, 64, 32);
+    this.scene.add(this.spotLight);
 
     //If window resizes
     window.addEventListener('resize', () => this.onWindowResize(), false);
